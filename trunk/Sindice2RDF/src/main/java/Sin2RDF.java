@@ -38,16 +38,6 @@ public class Sin2RDF extends HttpServlet {
         String key =request.getParameter("key");
         String format = request.getParameter("format");
 
-        boolean implicit_content = false;
-        boolean explicit_content = false;
-
-        boolean implicit_content_param = Boolean.valueOf(request.getParameter("implicit_content_param"));
-        boolean explicit_content_param = Boolean.valueOf(request.getParameter("explicit_content_param"));
-
-        if(implicit_content_param){implicit_content=true;}
-        if(explicit_content_param){explicit_content=true;}
-        if(!implicit_content_param && !explicit_content_param){implicit_content=true; explicit_content=true;}
-
         if(format.equals(RDFN3_FORMAT) || format.equals(RDFXML_FORMAT)){
             PrintWriter out = response.getWriter();
             if( format.equals(RDFN3_FORMAT) ){
@@ -62,7 +52,7 @@ public class Sin2RDF extends HttpServlet {
                 Iterator it = uris.listIterator();
                 while( it.hasNext()) {
                     String uri2 = it.next().toString();
-                    JSON2Model(this.getJSONObject(uri2),model,implicit_content,explicit_content);
+                    JSON2Model(this.getJSONObject(uri2),model);
                 }
                 if( format.equals(RDFN3_FORMAT) ){
                     model.write(out, "N3");
@@ -143,9 +133,9 @@ public class Sin2RDF extends HttpServlet {
         return model;
     }
 
-    protected void JSON2Model(JSONObject jsonObjec, Model model, boolean implicit_content, boolean explicit_content){
+    protected void JSON2Model(JSONObject jsonObjec, Model model){
 
-        if(jsonObjec.containsKey("explicit_content") && explicit_content){
+        if(jsonObjec.containsKey("explicit_content")){
             Iterator it = jsonObjec.getJSONArray("explicit_content").listIterator();
             while( it.hasNext() ) {
                 String[] atriple = it.next().toString().split(" ");
@@ -153,7 +143,7 @@ public class Sin2RDF extends HttpServlet {
             }
         }
         //Add implicit content
-        if(jsonObjec.containsKey("implicit_content") && implicit_content){
+        if(jsonObjec.containsKey("implicit_content")){
             Iterator it2 = jsonObjec.getJSONArray("implicit_content").listIterator();
             while( it2.hasNext() ) {
                 String[] atriple = it2.next().toString().split(" ");
