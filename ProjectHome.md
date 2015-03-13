@@ -1,0 +1,1 @@
+Web service get metadata from Sindice API Cache to RDF/XML
